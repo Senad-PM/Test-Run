@@ -1,10 +1,23 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { Button, Grid, Typography, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 
-const UserForms = props => {
-
+const UserForms = ({ addUser, updateUsers, submitted, data, isEdit }) => {
     const [id, setId] = useState(0);
     const [name, setName] = useState('');
+
+    useEffect(() => {
+        if(!submitted){
+            setId(0);
+            setName('');
+        }
+    }, [submitted]);
+
+    useEffect(() => {
+        if(data?.id && data.id !== 0){
+            setId(data.id);
+            setName(data.name)
+        }
+    }, [data]);
 
     return (
         <Grid 
@@ -16,10 +29,10 @@ const UserForms = props => {
                 display: 'block',
             }}
         >
-            <Grid item xs = {12}>
+            <Grid item xs={12}>
                 <Typography component={'h1'} sx={{color: '#000000'}}>User Form</Typography>
             </Grid>
-
+            
             <Grid item xs={12} sm={6} sx={{display:'flex'}}>
                 <Typography 
                     component={'label'} 
@@ -31,18 +44,19 @@ const UserForms = props => {
                         width: '100px',
                         display: 'block',
                     }}
-                >Name
+                >
+                    Name
                 </Typography>
                 <input 
                     type="text"
                     id='name'
                     name="name"
-                    sx={{width: '400px'}}
-                    value={id}
-                    onChange={e => setId(e.target.value)}
+                    style={{width: '400px'}}  // Changed sx to style
+                    value={name}  // Fixed: was {id}
+                    onChange={e => setName(e.target.value)}  // Fixed: was setId
                 />
             </Grid>
-
+            
             <Grid item xs={12} sm={6} sx={{display:'flex'}}>
                 <Typography 
                     component={'label'} 
@@ -54,18 +68,19 @@ const UserForms = props => {
                         width: '100px',
                         display: 'block',
                     }}
-                >ID
+                >
+                    ID
                 </Typography>
                 <input 
                     type="number"
                     id='id'
                     name="id"
-                    sx={{width: '400px'}}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    style={{width: '400px'}}  // Changed sx to style
+                    value={id}  // Fixed: was {name}
+                    onChange={e => setId(e.target.value)}  // Fixed: was setName
                 />
             </Grid>
-
+            
             <Button
                 sx={{
                     margin: 'auto',
@@ -78,9 +93,13 @@ const UserForms = props => {
                         opacity: '0.7',
                         backgroundColor: '#00c6e6',
                     }
-                }}>ADD
+                }}
+                onClick={() => isEdit? updateUsers({id: id, name: name}) : addUser({id, name})}
+            >
+                {
+                    isEdit ? "Update" : "Add"
+                }
             </Button>
-
         </Grid>
     );
 }
